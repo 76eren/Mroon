@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class PlatformScript : MonoBehaviour
 {
-    public float minX;
-    public float maxX;
-    public float movementSpeed;
+    [SerializeField] private float minX;
+    [SerializeField] private float maxX;
+    [SerializeField] private float movementSpeed;
 
-    Directions direction;
-    public int defaultDirection = 1;
-
+    private Directions direction;
+    [SerializeField] private int defaultDirection = 1;
     private List<GameObject> objectsToMoveAlong = new List<GameObject>();
     private Vector2 previousLocation;
 
@@ -34,54 +33,46 @@ public class PlatformScript : MonoBehaviour
         previousLocation = transform.position;
     }
 
-    void Update()
+void Update()
+{
+    Vector2 targetPosition = direction == Directions.right ? 
+                            new Vector2(maxX, transform.position.y) : 
+                            new Vector2(minX, transform.position.y);
+
+    MoveTowardsTarget(targetPosition);
+
+    if ((direction == Directions.right && transform.position.x == maxX) ||
+        (direction == Directions.left && transform.position.x == minX))
     {
-        if (direction == Directions.right)
-        {
-            Vector2 nextMove = Vector2.MoveTowards(
-                transform.position,
-                new Vector2(maxX, transform.position.y),
-                movementSpeed * Time.deltaTime
-                );
-
-            transform.position = nextMove;
-
-            if (transform.position.x == maxX)
-            {
-                direction = Directions.left;
-            }
-        }
-        
-        else if (direction == Directions.left)
-        {
-            Vector2 nextMove = Vector2.MoveTowards(
-            transform.position,
-            new Vector2(minX, transform.position.y),
-            movementSpeed * Time.deltaTime
-            );
-
-            transform.position = nextMove;
-
-            if (transform.position.x == minX)
-            {
-                direction = Directions.right;
-            }
-        }
-
-
-        // Move along all objects on platform
-        float deltaX = transform.position.x - previousLocation.x;
-        
-        foreach (GameObject i in objectsToMoveAlong)
-        {
-            Vector2 temp = i.transform.position;
-            temp.x += deltaX;
-            i.transform.position = temp;
-        }
-        previousLocation = transform.position; 
-
-
+        direction = direction == Directions.right ? Directions.left : Directions.right;
     }
+
+    MoveObjectsOnPlatform();
+}
+
+void MoveTowardsTarget(Vector2 target)
+{
+    Vector2 nextMove = Vector2.MoveTowards(
+        transform.position,
+        target,
+        movementSpeed * Time.deltaTime
+    );
+
+    transform.position = nextMove;
+}
+
+void MoveObjectsOnPlatform()
+{
+    float deltaX = transform.position.x - previousLocation.x;
+    
+    foreach (GameObject i in objectsToMoveAlong)
+    {
+        Vector2 temp = i.transform.position;
+        temp.x += deltaX;
+        i.transform.position = temp;
+    }
+    previousLocation = transform.position; 
+}
 
     private void OnCollisionEnter2D(Collision2D collision)
     {

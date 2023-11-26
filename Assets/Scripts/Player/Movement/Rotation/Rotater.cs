@@ -15,41 +15,30 @@ public class Rotater : MonoBehaviour
         {
             ReverseGravity(other.gameObject);
             GetComponent<Animator>().Play("Rotate");
-
-
         }
     }
 
-    // This reverses the gravity
     public static void ReverseGravity(GameObject other) 
     {
+        Rigidbody2D rigidbody2D;
+        PlayerStates playerStates;
+        rigidbody2D = other.GetComponent<Rigidbody2D>();
+
+        playerStates = other.GetComponent<PlayerStates>();
+        rigidbody2D.gravityScale = playerStates.gravityScale * -1;
+        playerStates.gravityScale = rigidbody2D.gravityScale;
         
-            Rigidbody2D rigidbody2D;
-            PlayerStates playerStates;
-            rigidbody2D = other.GetComponent<Rigidbody2D>();
+        Transform transform;
+        transform = other.GetComponent<Transform>();
+        Vector3 scale = transform.localScale;
+        scale.y *= -1;
+        transform.localScale = scale;
+        
+        playerStates.jumpDirection.y *= -1;
 
-
-            playerStates = other.GetComponent<PlayerStates>();
-            
-            rigidbody2D.gravityScale = playerStates.gravityScale * -1;
-            
-            playerStates.gravityScale = rigidbody2D.gravityScale;
-            
-            Transform transform;
-            transform = other.GetComponent<Transform>();
-            Vector3 scale = transform.localScale;
-            scale.y *= -1;
-            transform.localScale = scale;
-            
-            playerStates.jumpDirection.y *= -1;
-
-            Quaternion cock = transform.localRotation;
-            cock.y *= -1;
-            transform.localRotation = cock;
+        Quaternion rotation = transform.localRotation;
+        rotation.y *= -1;
+        transform.localRotation = rotation;
     }
-
-
-
-
 }
 

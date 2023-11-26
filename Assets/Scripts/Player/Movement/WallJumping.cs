@@ -1,30 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WallJumping : MonoBehaviour
 {
-    public Transform leftSide;
-    public Transform rightSide;
-    public Vector2 wallJumpforce;
-    public LayerMask whatIsWall;
-    public float wallCheckRadius = 0.1f;
-    public float blockMovementTime = 0.2f;
-    
-    public GameObject groundCheck;
-    public LayerMask WhatIsGround;
-    public float checkRadius;
-    
+    [SerializeField] private Transform leftSide;
+    [SerializeField] private Transform rightSide;
+    [SerializeField] private Vector2 wallJumpforce;
+    [SerializeField] private LayerMask whatIsWall;
+    [SerializeField] private float wallCheckRadius = 0.1f;
+    [SerializeField] private float blockMovementTime = 0.2f;
+    [SerializeField] private GameObject groundCheck;
+    [SerializeField] private LayerMask WhatIsGround;
+    [SerializeField] private float checkRadius;
 
     private bool wallAtLeftSide;
     private bool wallAtRightSide;
     private bool jumpToLeft;
     private bool jumpToRight;
-    private bool isWallJumping = false;
     private bool blockMovementToLeft = false;
     private bool blockMovementToRight = false;
     private Rigidbody2D rb;
     private PlayerStates playerStates;
+    private Boolean isWallJumping;
     
 
     private void Start()
@@ -38,36 +37,24 @@ public class WallJumping : MonoBehaviour
     {
         // This is for the walljumping
         // It blocks movement to the side you're trying to move towards when walljumping for x seconds
-        // I was thinking that maybe instead of blocking movement we should add an extra force to compensate for the counterforce but I guess this works just fine
+        // Alternatively we could add counter force to said direction for x seconds instead of blocking movement for that duaration, but this is fine for now
         float moveInput = Input.GetAxis("Horizontal");
-        if (blockMovementToLeft && moveInput < 0)
-        {
-            moveInput = 0;
-
-        }
-        if (blockMovementToRight && moveInput > 0)
+        if (blockMovementToLeft && moveInput < 0 || blockMovementToRight && moveInput > 0)
         {
             moveInput = 0;
         }
 
         // ----- Walljumping
-        if (jumpToLeft)
+        if (jumpToLeft || jumpToRight)
         {
-            rb.velocity = new Vector2(0, 0);
-            jumpToLeft = false;
-            rb.velocity += (new Vector2(-1 * wallJumpforce.x, wallJumpforce.y * playerStates.jumpDirection.y));
-
+            rb.velocity = Vector2.zero;
+            int directionMultiplier = jumpToLeft ? -1 : 1;
+            if (jumpToLeft) jumpToLeft = false;
+            if (jumpToRight) jumpToRight = false;
+            rb.velocity += new Vector2(directionMultiplier * wallJumpforce.x, wallJumpforce.y * playerStates.jumpDirection.y);
         }
-        if (jumpToRight)
-        {
-            rb.velocity = new Vector2(0, 0);
-            jumpToRight = false;
-            rb.velocity += (new Vector2(1 * wallJumpforce.x, wallJumpforce.y * playerStates.jumpDirection.y));
-        }
-    
     }
 
-    
 
     void Update()
     {
@@ -92,12 +79,10 @@ public class WallJumping : MonoBehaviour
 
             playerStates.isWalljumping = false;
             playerStates.dashes = playerStates.originalDash;
-        
         }
 
         if (wallAtLeftSide && Input.GetKeyDown(KeyCode.Space) && !isGrounded)
         {
-
             playerStates.isWalljumping = true;
             isWallJumping = true;
             playerStates.isWalljumping = true;
@@ -110,7 +95,6 @@ public class WallJumping : MonoBehaviour
 
         if (wallAtRightSide && Input.GetKeyDown(KeyCode.Space) && !isGrounded)
         {
-
             playerStates.isWalljumping = true;
             isWallJumping = true;
             playerStates.isWalljumping = true;
@@ -130,7 +114,6 @@ public class WallJumping : MonoBehaviour
         blockMovementToLeft = false;
         blockMovementToRight = false;
 
-        // Sets walljumping to false (WOW)
         isWallJumping = false;
         playerStates.isWalljumping = false;
 

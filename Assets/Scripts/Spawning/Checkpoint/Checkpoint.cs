@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Checkpoint : MonoBehaviour
 {
-    public bool cameraFollow;    // Determines whether the camera should continiously be following us or if it should be static
+    public bool cameraFollow; // Determines whether the camera should continiously be following us or if it should be static
     
     public int level; // I forgot what this was for but its important
     public Vector2 cameraPosition; // The position out camera should be on (if the camera is static of course)
@@ -19,7 +19,7 @@ public class Checkpoint : MonoBehaviour
 
 
     private bool alreadyRan = false; 
-    private bool stopMovingTheFuckingCamera = true; // I'm a professional
+    private bool stopMovingTheCamera = true; // I'm a professional
     
     // Level snapping
     private float cameraSpeed = 6f; // Our hardcoded camera speed for snapping
@@ -27,7 +27,6 @@ public class Checkpoint : MonoBehaviour
     private float initialCameraSpeed;
 
     private GameObject player;
-
 
     // Camera follow
     private float cameraDistanceFromPlayer = 2f;
@@ -41,13 +40,8 @@ public class Checkpoint : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other) 
     {
-
         // This may only run once
-
-        // We dont want to set the same checkpoint again. Kinda pointless
-        // I mean we could but like what's the point?
-
-
+        // We dont want to set the same checkpoint again.
         if (other.name.Equals("Player") && !alreadyRan)
         {
             // We set a new checkpoint
@@ -62,9 +56,7 @@ public class Checkpoint : MonoBehaviour
         
             // Now we gotta snap the camera to the new checkpoint
             alreadyRan=true;
-            stopMovingTheFuckingCamera=false;
-            
-          
+            stopMovingTheCamera=false;
         }
 
     }
@@ -78,12 +70,11 @@ public class Checkpoint : MonoBehaviour
     }
 
 
-
     private void Update() 
     {
         // We only want to run this if this really is the active checkpoint
-        // We dont want multiple checkpoints fucking each other
-        // This is a very shitty way of checking
+        // We dont want multiple checkpoints messing with each other
+        // This is a very bad way of checking
         // We should be comparing objects instead.
         // But I guess this will suffice.
         if (CheckpointData.returnCheckpoint().location != playerLocation)
@@ -92,10 +83,9 @@ public class Checkpoint : MonoBehaviour
         }
 
 
-        // I'm not copying celeste :))
-
+        // This is absolutely not copying Celeste, I would n
         // If camera follow is off (so a static camera)
-        if (!CheckpointData.returnCheckpoint().camerafollow && !stopMovingTheFuckingCamera) 
+        if (!CheckpointData.returnCheckpoint().camerafollow && !stopMovingTheCamera) 
         {
             Vector3 uwu = Vector3.MoveTowards(Camera.main.transform.position, new Vector3(cameraPosition.x, cameraPosition.y, -10f), cameraSpeed * Time.deltaTime);
             Camera.main.transform.position = uwu;
@@ -103,7 +93,7 @@ public class Checkpoint : MonoBehaviour
         
             if ( (Vector2) Camera.main.transform.position == cameraPosition)
             {
-                stopMovingTheFuckingCamera=true;
+                stopMovingTheCamera=true;
                 cameraSpeed = initialCameraSpeed;
             }
         
@@ -111,16 +101,14 @@ public class Checkpoint : MonoBehaviour
 
         // if our camera follow is on (so not static)
         if (CheckpointData.returnCheckpoint().camerafollow)
-        {
-            // This wont fit on one line you know
-            
-            Vector3 uwu = Vector3.MoveTowards(Camera.main.transform.position
+        {            
+            Vector3 newPosition = Vector3.MoveTowards(Camera.main.transform.position
             ,new Vector3(player.transform.localPosition.x + cameraDistanceFromPlayer, player.transform.localPosition.y+2.4f, -10f) // 2.4 another hardcoded value huh
             , cameraSpeed * Time.deltaTime);
             
 
 
-            Camera.main.transform.position = uwu;
+            Camera.main.transform.position = newPosition;
             cameraSpeed *= cameraSpeedIncrease;
 
         }

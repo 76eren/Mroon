@@ -5,14 +5,13 @@ using UnityEngine;
 public class Parry : MonoBehaviour
 {
     private Rigidbody2D rb;
+    [SerializeField] private Vector2 ParryForce;
+    [SerializeField] private float SpeedCapIncrease = 7f;
+    [SerializeField] private float speedCapDecrease = 0.5f;
+    [SerializeField] private float delay = 0.2f;
 
-    public Vector2 ParryForce;
-    public float SpeedCapIncrease = 7f;
-    public float speedCapDecrease = 0.5f;
-    public float delay = 0.2f;
-
-    bool checkForJump = false;
-    float oldCap;
+    private bool checkForJump = false;
+    private float oldCap;
     private PlayerStates playerStates;
     private bool checkWhenToEnableJumpingAgain = false;
 
@@ -28,7 +27,6 @@ public class Parry : MonoBehaviour
     {
         if (collision.tag.Equals("Parry"))
         {
-            print("Getting in");
             checkForJump = true;
             playerStates.parryJump = true; // Makes us unable to perform a regular jump and instead allow us to perform a custom (parry) jump
             checkWhenToEnableJumpingAgain=false;
@@ -49,7 +47,7 @@ public class Parry : MonoBehaviour
     {
         
         // After doing a parryjump if the user keeps holding down the jump button the player will perform a regular jump right after
-        // A parry jump (because they left the collider). This caused the player to lose their regular jumps when parrying.
+        // A parry jump (because they left the collider). This causes the player to lose their regular jumps when parrying.
         // This here will make sure that doesn't hapepn.
         if (checkWhenToEnableJumpingAgain && !Input.GetKeyDown(KeyCode.Space)) 
         {
@@ -63,7 +61,7 @@ public class Parry : MonoBehaviour
             // we reset the velocity so the current forces don't add up
             rb.velocity = new Vector2(rb.velocity.x, 0);
 
-            StartCoroutine(MessWithSpeedCap());
+            StartCoroutine(EditSpeedCap());
             if (transform.localScale.x > 0)
             {
                 // We parry up to the right
@@ -89,7 +87,7 @@ public class Parry : MonoBehaviour
 
     }
 
-    IEnumerator MessWithSpeedCap()
+    IEnumerator EditSpeedCap()
     {
         playerStates.speedCap += SpeedCapIncrease;
         while (true)

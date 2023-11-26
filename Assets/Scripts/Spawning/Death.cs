@@ -9,13 +9,7 @@ public class Death : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            
-            int deaths = PlayerPrefs.GetInt("deahts")+1;
-            PlayerPrefs.SetInt("deaths", deaths);
-
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            
-
+            Die();
         }    
     }
 
@@ -23,11 +17,14 @@ public class Death : MonoBehaviour
     {
         if (collision.collider.tag.Equals("Player"))
         {
-            int deaths = PlayerPrefs.GetInt("deahts") + 1;
-            PlayerPrefs.SetInt("deaths", deaths);
-
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            Die();
         }
+    }
+
+    private void Die() {
+        int deaths = PlayerPrefs.GetInt("deahts") + 1;
+        PlayerPrefs.SetInt("deaths", deaths);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
 

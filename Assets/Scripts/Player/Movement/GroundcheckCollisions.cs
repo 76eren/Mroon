@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +11,7 @@ public class GroundcheckCollisions : MonoBehaviour
     {
         if (other.tag == "Ground")
         {
-            isTouching=true;
+            setTouching(true);
         }    
     }
 
@@ -19,8 +20,12 @@ public class GroundcheckCollisions : MonoBehaviour
 
         if (other.tag == "Ground")
         {
-            isTouching=false;
+            setTouching(false);
         }    
+    }
+
+    private void setTouching(Boolean value) {
+        isTouching = value;
     }
 
 

@@ -5,15 +5,15 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
-    public GameObject groundCheck;
-    public LayerMask WhatIsGround;
-    public float speed;
-    public float checkRadius;
-    public float jumpForce;
-    public float counterForce;
+    [SerializeField] private GameObject groundCheck;
+    [SerializeField] private LayerMask WhatIsGround;
+    [SerializeField] private float speed;
+    [SerializeField] private float checkRadius;
+    [SerializeField] private float jumpForce;
+    [SerializeField] private float counterForce;
 
-    public Transform leftSide;
-    public Transform rightSide;
+    [SerializeField] private Transform leftSide;
+    [SerializeField] private Transform rightSide;
 
     private float previousInput = 0f;
     private float currentLookSide;
@@ -32,11 +32,10 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Jumping
+        // This handles the jumping
         if (jump)
         {
             rb.velocity = new Vector2(rb.velocity.x, 0f);
-
             rb.velocity +=  GetComponent<PlayerStates>().jumpDirection * jumpForce;            
             jump = false;
         }
@@ -50,7 +49,6 @@ public class PlayerMovement : MonoBehaviour
 
         
         float moveInput = Input.GetAxis("Horizontal");
-
         if (moveInput < 0 && playerStates.blockMovementToLeft)
         {
             moveInput = 0;
@@ -71,7 +69,6 @@ public class PlayerMovement : MonoBehaviour
             lookDirection.x *= -1;
             transform.localScale = lookDirection;
 
-
             // We also need to change the positions of the leftside and rightside because they are 
             // children of the character
             // So they also will get flipped in the process
@@ -81,7 +78,6 @@ public class PlayerMovement : MonoBehaviour
             leftSide.transform.position = right_side;
             rightSide.transform.position = left_side;
 
-
             currentLookSide *= -1;
 
         }
@@ -90,7 +86,6 @@ public class PlayerMovement : MonoBehaviour
             Vector2 lookDirection = transform.localScale;
             lookDirection.x = 0.9f;
             transform.localScale = lookDirection;
-
 
             // We also need to change the positions of the leftside and rightside because they are 
             // children of the character
@@ -108,7 +103,7 @@ public class PlayerMovement : MonoBehaviour
         // We do this by adding a counter force in the opposite direction we're moving in
         // NOTE: This only makes sure our player doesn't go too fast on the x-axis.
         // You could do the same on the y-axis but I don't think that is necessary
-        
+        // Alternatively, we could just clamp the rb.velocity but this is cooler.
         float velocityx = rb.velocity.x;
         float forceBack = 0f;
         if (velocityx > 0)
@@ -130,10 +125,9 @@ public class PlayerMovement : MonoBehaviour
     {
         bool isGrounded = Physics2D.OverlapCircle(groundCheck.transform.position, checkRadius, WhatIsGround);
 
-        
         // When we jump there is this small window where we are actually still "touching" the ground
         // This is caused because we are still in the radius of the sphere that is being created at the player's feet
-        // We can fix this by just doing all of these if statements which I am too lazy to explain,
+        // This fixes that
         if (isGrounded && playerStates.jumps != playerStates.originalJumps) 
         {
             if (!Input.GetKey(KeyCode.Space)) 
@@ -141,15 +135,10 @@ public class PlayerMovement : MonoBehaviour
                 playerStates.jumps = playerStates.originalJumps;
 
             }
-                    
         }
-
         if (Input.GetKeyDown(KeyCode.Space) && playerStates.jumps > 0 && !playerStates.parryJump) {
             jump=true;
-            playerStates.jumps--;
-               
+            playerStates.jumps--;      
         }
-
     }
-
 }

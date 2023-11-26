@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Dashing : MonoBehaviour
 {
-    public float dashLength = 0.3f;
-    public float speedCapIncrease = 8;
-    public GameObject groundCheck;
-    public LayerMask WhatIsGround;
-    public float checkRadius;
+    [SerializeField] private float dashLength = 0.3f;
+    [SerializeField] private float speedCapIncrease = 8;
+    [SerializeField] private GameObject groundCheck;
+    [SerializeField] private LayerMask WhatIsGround;
+    [SerializeField] private float checkRadius;
 
 
 
@@ -21,7 +21,6 @@ public class Dashing : MonoBehaviour
     private PlayerStates playerStates;
     private float gravityScale;
 
-    // FUUUCKKK
     public Transform leftSide;
     public Transform rightSide;        
 
@@ -32,12 +31,7 @@ public class Dashing : MonoBehaviour
         playerStates = GetComponent<PlayerStates>();
         gravityScale = rb.gravityScale;
 
-
-        // Values for dashing
-        oldCap = playerStates.speedCap;
-
-//        oldGravityScale = playerStates.gravityScale;
-        
+        oldCap = playerStates.speedCap;        
     }
 
     private void FixedUpdate()
@@ -46,7 +40,6 @@ public class Dashing : MonoBehaviour
         {
             // Before we can dash we need to update the speedcap
             playerStates.speedCap += speedCapIncrease;
-            //oldGravityScale = rb.gravityScale;
             gravityScale = rb.gravityScale;
             rb.gravityScale = 0;
             isDashing = true;
@@ -79,30 +72,14 @@ public class Dashing : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift) && playerStates.dashes > 0 && Input.GetButton("Horizontal"))
         {
             canDash = true;
-
             isDashing = true;
             playerStates.isDashing = true;
         }
-
-        /*
-        /// This code makes us stop dashing when we dash into wall
-        /// It works but is kinda broken at the same time so I disabled it
-        bool isTouchingLeftSide = Physics2D.OverlapCircle(leftSide.transform.position, checkRadius, WhatIsGround);
-        bool isTouchingRightSide = Physics2D.OverlapCircle(rightSide.transform.position, checkRadius, WhatIsGround);
-        if (isTouchingLeftSide && playerStates.speedCap > playerStates.originalCap || isTouchingRightSide && playerStates.speedCap > playerStates.originalCap)
-        {
-            StartCoroutine(stopDashing(0.04f)); // AAAAAH HARDCODING WEEE WOOO WEEE WOOO THE POLICE IS COMING
-        }
-        */
-
     }
 
     IEnumerator stopDashing(float timeToWait)
     {
-
         yield return new WaitForSeconds(timeToWait); 
-          
-
         playerStates.speedCap = oldCap;
 
         if (playerStates.gravityScale != 0) 
@@ -113,8 +90,7 @@ public class Dashing : MonoBehaviour
         else 
         {
             // Alright so let me explain
-            // If the dashes into a reverse block things mess up
-            
+            // If we dash into a reverse block things mess up
             // The dashing sets the gravity scale to 0 and the Rotation script sets the gravityscale to the reverse of 0
             // This bit is supposed to make sure that doesn't happen.
             playerStates.gravityScale = gravityScale; // Sets the gravity scale to before we rotated

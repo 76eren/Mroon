@@ -5,31 +5,30 @@ using UnityEngine;
 public class Checkpoint : MonoBehaviour
 {
     public bool cameraFollow; // Determines whether the camera should continiously be following us or if it should be static
-    
-    public int level; // I forgot what this was for but its important
+    public int level; 
     public Vector2 cameraPosition; // The position out camera should be on (if the camera is static of course)
     public Vector2 playerLocation; // The position our player should respawn at.
 
+
     // Camera resizing
     public float cameraSize = 5.3f;
-
     public bool reversedGravity;
-
     private float cameraSizeSpeedPercentage = 0.009f; // x percent
-
-
     private bool alreadyRan = false; 
-    private bool stopMovingTheCamera = true; // I'm a professional
+    private bool stopMovingTheCamera = true; 
     
+
     // Level snapping
-    private float cameraSpeed = 6f; // Our hardcoded camera speed for snapping
+    // Thes cannot be public because then we'd need to change this for each gameobject
+    private float cameraSpeed = 6f; 
     private float cameraSpeedIncrease = 1.025f;
     private float initialCameraSpeed;
-
     private GameObject player;
+
 
     // Camera follow
     private float cameraDistanceFromPlayer = 2f;
+
 
     private void Awake() 
     {
@@ -83,12 +82,17 @@ public class Checkpoint : MonoBehaviour
         }
 
 
-        // This is absolutely not copying Celeste, I would n
         // If camera follow is off (so a static camera)
         if (!CheckpointData.returnCheckpoint().camerafollow && !stopMovingTheCamera) 
         {
-            Vector3 uwu = Vector3.MoveTowards(Camera.main.transform.position, new Vector3(cameraPosition.x, cameraPosition.y, -10f), cameraSpeed * Time.deltaTime);
-            Camera.main.transform.position = uwu;
+            Vector3 position = Vector3.MoveTowards(
+                Camera.main.transform.position,
+                new Vector3(cameraPosition.x, cameraPosition.y, -10f),
+                cameraSpeed * Time.deltaTime
+                );
+            
+            
+            Camera.main.transform.position = position;
             cameraSpeed *= cameraSpeedIncrease;
         
             if ( (Vector2) Camera.main.transform.position == cameraPosition)
@@ -99,24 +103,24 @@ public class Checkpoint : MonoBehaviour
         
         }    
 
+
         // if our camera follow is on (so not static)
-        if (CheckpointData.returnCheckpoint().camerafollow)
-        {            
-            Vector3 newPosition = Vector3.MoveTowards(Camera.main.transform.position
-            ,new Vector3(player.transform.localPosition.x + cameraDistanceFromPlayer, player.transform.localPosition.y+2.4f, -10f) // 2.4 another hardcoded value huh
-            , cameraSpeed * Time.deltaTime);
-            
+    if (CheckpointData.returnCheckpoint().camerafollow)
+    {            
+        Vector3 newPosition = Vector3.MoveTowards(Camera.main.transform.position
+        ,new Vector3(
+             player.transform.localPosition.x + cameraDistanceFromPlayer
+            , player.transform.localPosition.y+2.4f // What is this magic number???
+            , -10f) 
+        , cameraSpeed * Time.deltaTime);
+        Camera.main.transform.position = newPosition;
+        cameraSpeed *= cameraSpeedIncrease;
+    }
 
-
-            Camera.main.transform.position = newPosition;
-            cameraSpeed *= cameraSpeedIncrease;
-
-        }
 
         // Makes our camera increase/decrease size
         if (Camera.main.orthographicSize != cameraSize) 
         {
-
             if (Camera.main.orthographicSize < cameraSize)
             {
                 float size = Camera.main.orthographicSize * (1 + cameraSizeSpeedPercentage);
@@ -137,11 +141,5 @@ public class Checkpoint : MonoBehaviour
             }
 
         }
-
-
-    
     }
-
-    
-
 }
